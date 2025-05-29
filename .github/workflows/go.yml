@@ -37,3 +37,14 @@ jobs:
         with:
           name: schema-${{ matrix.goos }}-${{ matrix.goarch }}
           path: dist/schema
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Release ${{ inputs.version }}
+          tag_name: v${{ inputs.version }}
+          body: Body- Version number ${{inputs.version }}
+          files: dist/schema
