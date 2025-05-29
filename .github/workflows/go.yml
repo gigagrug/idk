@@ -41,6 +41,7 @@ jobs:
         with:
           tag_name: ${{ inputs.version }}
           name: ${{ inputs.version }}
+          body: ${{ inputs.version }}
           files: ${{ env.BINARY }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
