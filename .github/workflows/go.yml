@@ -1,10 +1,12 @@
-name: Build & Release Schema
+name: Manual Build & Release Schema
 
 on:
-  workflow_dispatch: # Manual trigger via GitHub UI
-  push:
-    tags:
-      - "v*" # Trigger when a version tag is pushed (e.g., v1.2.3)
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: "Version (e.g., v1.2.3)"
+        required: true
 
 jobs:
   build:
@@ -41,11 +43,11 @@ jobs:
             tar -czf ../schema-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz schema
           fi
 
-      - name: Upload binaries to release
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Create GitHub Release & Upload Assets
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            dist/schema-${{ matrix.goos }}-${{ matrix.goarch }}.*
+          tag_name: ${{ inputs.version }}
+          name: ${{ inputs.version }}
+          files: dist/schema-${{ matrix.goos }}-${{ matrix.goarch }}.*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
