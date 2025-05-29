@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-REPO="gigagrug/idk"  # ← your GitHub repo
+REPO="gigagrug/idk"
 VERSION="${1:-latest}"
 TMP_DIR="$(mktemp -d)"
 
@@ -15,7 +15,7 @@ case "$OS" in
   *)        echo "❌ Unsupported OS: $OS" && exit 1 ;;
 esac
 
-# Detect Architecture
+# Detect Arch
 ARCH="$(uname -m)"
 case "$ARCH" in
   x86_64)   GOARCH="amd64" ;;
@@ -36,18 +36,21 @@ chmod +x "$TMP_DIR/schema${EXT}"
 
 # Set install path
 if [ "$GOOS" = "windows" ]; then
-  INSTALL_PATH="/c/Program Files/Schema/schema.exe"
-  echo "🚀 Installing to Windows path: $INSTALL_PATH"
-  mkdir -p "/c/Program Files/Schema"
+  INSTALL_DIR="/c/Program Files/Schema"
+  INSTALL_PATH="${INSTALL_DIR}/schema.exe"
+  echo "🚀 Installing to $INSTALL_PATH..."
+  mkdir -p "$INSTALL_DIR"
   mv "$TMP_DIR/schema${EXT}" "$INSTALL_PATH"
-  echo "✅ Installed schema.exe to Program Files."
+  echo "✅ Installed to C:\\Program Files\\Schema\\schema.exe"
   echo "👉 Add 'C:\\Program Files\\Schema' to your Windows PATH if it's not already."
 else
   INSTALL_DIR="/usr/local/bin"
-  echo "🚀 Installing to $INSTALL_DIR..."
-  sudo mv "$TMP_DIR/schema${EXT}" "$INSTALL_DIR/schema"
-  echo "✅ Installed schema. Run it with: schema"
+  INSTALL_PATH="${INSTALL_DIR}/schema"
+  echo "🚀 Installing to $INSTALL_PATH..."
+  sudo mv "$TMP_DIR/schema${EXT}" "$INSTALL_PATH"
+  echo "✅ Installed schema to $INSTALL_PATH"
 fi
 
 rm -rf "$TMP_DIR"
+
 
