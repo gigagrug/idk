@@ -30,17 +30,6 @@ FILENAME="schema-${VERSION}-${GOOS}-${GOARCH}${EXT}"
 URL="https://github.com/${REPO}/releases/download/${VERSION}/${FILENAME}"
 
 echo "🔽 Downloading $FILENAME from $URL..."
-
-# Check HTTP status before download
-HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-if [ "$HTTP_STATUS" != "200" ]; then
-  echo "❌ Release binary not found: $FILENAME"
-  echo "HTTP status code: $HTTP_STATUS"
-  echo "Please check the version or that the release exists."
-  rm -rf "$TMP_DIR"
-  exit 1
-fi
-
 curl -sSL "$URL" -o "$TMP_DIR/schema${EXT}"
 
 chmod +x "$TMP_DIR/schema${EXT}"
