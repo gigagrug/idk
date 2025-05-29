@@ -39,8 +39,8 @@ if [ "$GOOS" = "windows" ]; then
   INSTALL_DIR="/c/Program Files/Schema"
   INSTALL_PATH="${INSTALL_DIR}/schema.exe"
   echo "🚀 Installing to $INSTALL_PATH..."
-  sudo mkdir -p '/c/Program Files/Schema/'
-  #mv "$TMP_DIR/schema${EXT}" "$INSTALL_PATH"
+  mkdir -p "$INSTALL_DIR"
+  mv "$TMP_DIR/schema${EXT}" "$INSTALL_PATH"
   echo "✅ Installed to C:\\Program Files\\Schema\\schema.exe"
   echo "👉 Add 'C:\\Program Files\\Schema' to your Windows PATH if it's not already."
 else
