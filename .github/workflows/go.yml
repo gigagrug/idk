@@ -1,19 +1,14 @@
 name: Build & Release Schema
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        type: string
-        description: Version
-        required: true
-
-permissions:
-  contents: write
+  workflow_dispatch: # Manual trigger via GitHub UI
+  push:
+    tags:
+      - "v*" # Trigger when a version tag is pushed (e.g., v1.2.3)
 
 jobs:
   build:
-    name: Build ${{ matrix.goos }}-${{ matrix.goarch }}
+    name: Build schema for ${{ matrix.goos }}-${{ matrix.goarch }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -28,31 +23,29 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.22" # Adjust as needed
+          go-version: "1.22"
 
       - name: Build schema binary
         run: |
-          mkdir -p dist
+          mkdir -p dist/${{ matrix.goos }}-${{ matrix.goarch }}
           ext=""
           if [ "${{ matrix.goos }}" = "windows" ]; then ext=".exe"; fi
-          OUTPUT=dist/schema-${{ matrix.goos }}-${{ matrix.goarch }}$ext
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o $OUTPUT .
-          echo "BUILT_BINARY=$OUTPUT" >> $GITHUB_ENV
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/${{ matrix.goos }}-${{ matrix.goarch }}/schema$ext .
 
-      - name: Upload artifact (for manual runs or inspection)
-        if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4
-        with:
-          name: schema-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: ${{ env.BUILT_BINARY }}
+      - name: Archive binary
+        run: |
+          cd dist/${{ matrix.goos }}-${{ matrix.goarch }}
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            zip ../schema-${{ matrix.goos }}-${{ matrix.goarch }}.zip schema.exe
+          else
+            tar -czf ../schema-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz schema
+          fi
 
-      - name: Upload to GitHub Release
-        if: github.event_name == 'release'
+      - name: Upload binaries to release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          name: Release ${{ inputs.version }}
-          tag_name: v${{ inputs.version }}
-          body: Body- Version number ${{inputs.version }}
-          files: ${{ env.BUILT_BINARY }}
+          files: |
+            dist/schema-${{ matrix.goos }}-${{ matrix.goarch }}.*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
