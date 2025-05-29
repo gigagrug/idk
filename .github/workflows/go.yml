@@ -50,6 +50,9 @@ jobs:
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
+          name: Release ${{ inputs.version }}
+          tag_name: v${{ inputs.version }}
+          body: Body- Version number ${{inputs.version }}
           files: ${{ env.BUILT_BINARY }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
