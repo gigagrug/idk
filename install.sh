@@ -35,14 +35,24 @@ curl -sSL "$URL" -o "$TMP_DIR/schema${EXT}"
 chmod +x "$TMP_DIR/schema${EXT}"
 
 # Set install path
+
 if [ "$GOOS" = "windows" ]; then
-  INSTALL_DIR="/c/Program Files/Schema"
+  INSTALL_DIR="$HOME/bin"
   INSTALL_PATH="${INSTALL_DIR}/schema.exe"
   echo "🚀 Installing to $INSTALL_PATH..."
+
   mkdir -p "$INSTALL_DIR"
   mv "$TMP_DIR/schema${EXT}" "$INSTALL_PATH"
-  echo "✅ Installed to C:\\Program Files\\Schema\\schema.exe"
-  echo "👉 Add 'C:\\Program Files\\Schema' to your Windows PATH if it's not already."
+
+  # Ensure $HOME/bin is in PATH in Git Bash
+  PROFILE_FILE="$HOME/.bashrc"
+  if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$PROFILE_FILE" 2>/dev/null; then
+    echo 'export PATH="$HOME/bin:$PATH"' >> "$PROFILE_FILE"
+    echo "🔧 Added \$HOME/bin to PATH in $PROFILE_FILE"
+  fi
+
+  echo "✅ Installed schema.exe to $INSTALL_PATH"
+  echo "👉 Restart Git Bash or run: source ~/.bashrc"
 else
   INSTALL_DIR="/usr/local/bin"
   INSTALL_PATH="${INSTALL_DIR}/schema"
@@ -51,6 +61,5 @@ else
   echo "✅ Installed schema to $INSTALL_PATH"
 fi
 
+
 rm -rf "$TMP_DIR"
-
-
