@@ -44,15 +44,7 @@ if [ "$GOOS" = "windows" ]; then
   mkdir -p "$INSTALL_DIR"
   mv "$TMP_DIR/schema${EXT}" "$INSTALL_PATH"
 
-  # Ensure $HOME/bin is in PATH in Git Bash
-  PROFILE_FILE="$HOME/.bashrc"
-  if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$PROFILE_FILE" 2>/dev/null; then
-    echo 'export PATH="$HOME/bin:$PATH"' >> "$PROFILE_FILE"
-    echo "🔧 Added \$HOME/bin to PATH in $PROFILE_FILE"
-  fi
-
   echo "✅ Installed schema.exe to $INSTALL_PATH"
-  echo "👉 Restart Git Bash or run: source ~/.bashrc"
 else
   INSTALL_DIR="/usr/local/bin"
   INSTALL_PATH="${INSTALL_DIR}/schema"
