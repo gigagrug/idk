@@ -24,7 +24,7 @@ esac
 EXT=""
 if [ "$GOOS" = "windows" ]; then EXT=".exe"; fi
 FILENAME="schema-${GOOS}-${GOARCH}${EXT}"
-URL="https://github.com/${REPO}/releases/download/${VERSION}/${FILENAME}"
+URL="https://github.com/${REPO}/releases/${VERSION}/download/${FILENAME}"
 echo "🔽 Downloading $FILENAME from $URL..."
 curl -sSL "$URL" -o "$TMP_DIR/schema${EXT}"
 chmod +x "$TMP_DIR/schema${EXT}"
