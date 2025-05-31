@@ -23,7 +23,13 @@ func main() {
 	dbURL := flag.String("dburl", "dev.db", "add dburl")
 	create := flag.String("create", "", "create sql file")
 	migrate := flag.String("migrate", "", "migrate database")
+	version := flag.Bool("v", false, "get version")
 	flag.Parse()
+
+	if *version {
+		fmt.Println("Version:", "0.7.0")
+		return
+	}
 
 	if *initFS {
 		if _, err := os.Stat("./schema/"); os.IsNotExist(err) {

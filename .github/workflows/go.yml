@@ -32,7 +32,7 @@ jobs:
           mkdir -p dist
           ext=""
           if [ "${{ matrix.goos }}" = "windows" ]; then ext=".exe"; fi
-          output_name=schema-${{ inputs.version }}-${{ matrix.goos }}-${{ matrix.goarch }}$ext
+          output_name=schema-${{ matrix.goos }}-${{ matrix.goarch }}$ext
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/$output_name .
           echo "BINARY=dist/$output_name" >> $GITHUB_ENV
 
