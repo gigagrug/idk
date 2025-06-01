@@ -16,6 +16,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+var version = "dev"
+
 func main() {
 	initFS := flag.Bool("initfs", false, "init schema files")
 	initDB := flag.Bool("initdb", false, "init DB migrations")
@@ -27,7 +29,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Println("Version:", "0.8.0")
+		fmt.Println("Version:", version)
 		return
 	}
 
