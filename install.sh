@@ -24,7 +24,7 @@ esac
 EXT=""
 if [ "$GOOS" = "windows" ]; then EXT=".exe"; fi
 FILENAME="schema-${GOOS}-${GOARCH}${EXT}"
-if [ "$VERSION" = "latest"]; then 
+if [ "$VERSION" = "latest" ]; then 
 	URL="https://github.com/${REPO}/releases/${VERSION}/download/${FILENAME}"
 else
 	URL="https://github.com/${REPO}/releases/download/${VERSION}/${FILENAME}"
