@@ -10,30 +10,17 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.goos }}-${{ matrix.goarch }}
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        goos: [linux]
-        goarch: [amd64]
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Go (1.24.3)
         uses: actions/setup-go@v5
         with:
           go-version: "stable"
-
-      # - name: Install dependencies
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y build-essential
-
-      # - name: Set version environment variable
-      #   run: echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
 
       - name: Build and Release with GoReleaser
         uses: goreleaser/goreleaser-action@v6
