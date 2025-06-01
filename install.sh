@@ -30,7 +30,7 @@ if [ "$VERSION" = "latest" ]; then
 else
 	URL="https://github.com/${REPO}/releases/download/${VERSION}/${FILENAME}"
 fi
-echo "🔽 Downloading $FILENAME from $URL..."
+echo "🔽 Downloading $FILENAME from $URL"
 curl -sSL "$URL" -o "$TMP_DIR/schema${EXT}"
 chmod +x "$TMP_DIR/schema${EXT}"
 
