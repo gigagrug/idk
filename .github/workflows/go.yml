@@ -16,6 +16,7 @@ jobs:
       matrix:
         goos: [linux]
         goarch: [amd64]
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -34,7 +35,7 @@ jobs:
         run: |
           mkdir -p dist
           GOOS=linux GOARCH=amd64 CGO_ENABLED=1 CC=gcc go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/schema .
-          echo "BINARY=dist/$output_name" >> $GITHUB_ENV
+          echo "BINARY=dist/schema" >> $GITHUB_ENV
 
       - name: Create GitHub Release & Upload Binary
         uses: softprops/action-gh-release@v2
