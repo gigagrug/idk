@@ -19,10 +19,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.24.3"
+
+      - name: Install SQLite dependencies (Linux)
+        if: matrix.goos == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libsqlite3-dev
+
       - name: Build schema binary
         run: |
           mkdir -p dist
@@ -33,6 +41,7 @@ jobs:
           output_name=schema-${{ matrix.goos }}-${{ matrix.goarch }}$ext
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
           echo "BINARY=dist/$output_name" >> $GITHUB_ENV
+
       - name: Create GitHub Release & Upload Binaries
         uses: softprops/action-gh-release@v2
         with:
