@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [windows, linux]
+        goos: [windows]
         goarch: [amd64]
     steps:
       - name: Checkout Code
@@ -33,9 +33,6 @@ jobs:
             export CC=x86_64-w64-mingw32-gcc
           fi
           echo "CC set to: $CC"
-        shell: bash
-      - name: Build Schema Binary
-        run: |
           mkdir -p dist
           ext=""
           if [ "${{ matrix.goos }}" == "windows" ]; then
