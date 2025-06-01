@@ -51,6 +51,7 @@ jobs:
             ext=".exe"
           fi
           output_name=schema-${{ matrix.goos }}-${{ matrix.goarch }}$ext
+          export CGO_ENABLED=1
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} CC=$CC go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
           echo "BINARY=dist/$output_name" >> $GITHUB_ENV
 
