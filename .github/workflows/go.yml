@@ -23,6 +23,8 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.24.3"
+      - name: Install dependencies
+        run: go get .
       - name: Build schema binary
         env:
           CGO_ENABLE: 1
