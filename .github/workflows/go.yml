@@ -24,7 +24,7 @@ jobs:
         with:
           go-version: "1.24.3"
       - name: Install Dependencies
-        run: sudo apt-get install -y build-essential mingw-w64
+        run: sudo apt-get install -y build-essential mingw-w64 libc6-dev
       - name: Set CC for Cross-Compilation
         run: |
           if [ "${{ matrix.goos }}" == "linux" ]; then
