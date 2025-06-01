@@ -14,33 +14,48 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [linux, windows, darwin]
-        goarch: [amd64, arm64]
+        goos: [linux, windows]
+        goarch: [amd64]
     steps:
-      - name: Checkout code
+      # Checkout the code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Go
+      # Set up Go environment
+      - name: Set up Go (1.24.3)
         uses: actions/setup-go@v5
         with:
           go-version: "1.24.3"
 
-      - name: Install SQLite dependencies (Linux)
-        if: matrix.goos == 'linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential libsqlite3-dev
+      # Install Linux dependencies if needed
+      - name: Install Dependencies (Linux Only)
+        run: sudo apt-get install -y build-essential
 
-      - name: Build schema binary
+      # Set the correct C compiler (CC) based on the target platform
+      - name: Set CC for Cross-Compilation
+        run: |
+          if [ "${{ matrix.goos }}" == "linux" ]; then
+            export CC=gcc
+          elif [ "${{ matrix.goos }}" == "windows" ]; then
+            export CC=x86_64-w64-mingw32-gcc
+          fi
+          echo "CC set to: $CC"
+        shell: bash
+
+      # Build the Go binary for the specified OS/Arch
+      - name: Build Schema Binary
         run: |
           mkdir -p dist
           ext=""
-          if [ "${{ matrix.goos }}" = "windows" ]; then ext=".exe"; fi
+          if [ "${{ matrix.goos }}" == "windows" ]; then
+            ext=".exe"
+          fi
           output_name=schema-${{ matrix.goos }}-${{ matrix.goarch }}$ext
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} CC=$CC go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
           echo "BINARY=dist/$output_name" >> $GITHUB_ENV
 
-      - name: Create GitHub Release & Upload Binaries
+      # Create a GitHub release and upload the generated binaries
+      - name: Create GitHub Release & Upload Binary
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.version }}
