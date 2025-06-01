@@ -27,7 +27,7 @@ jobs:
         run: go get .
       - name: Build schema binary
         env:
-          CGO_ENABLE: 1
+          CGO_ENABLED: 1
         run: |
           mkdir -p dist
           ext=""
