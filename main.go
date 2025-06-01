@@ -19,16 +19,16 @@ import (
 var version = "dev"
 
 func main() {
+	versionFlag := flag.Bool("v", false, "get version")
 	initFS := flag.Bool("initfs", false, "init schema files")
 	initDB := flag.Bool("initdb", false, "init DB migrations")
 	db := flag.String("db", "sqlite", "add db: sqlite, postgres, mysql, mariadb")
 	dbURL := flag.String("dburl", "dev.db", "add dburl")
 	create := flag.String("create", "", "create sql file")
 	migrate := flag.String("migrate", "", "migrate database")
-	version := flag.Bool("v", false, "get version")
 	flag.Parse()
 
-	if *version {
+	if *versionFlag {
 		fmt.Println("Version:", version)
 		return
 	}
