@@ -24,12 +24,14 @@ jobs:
         with:
           go-version: "1.24.3"
       - name: Build schema binary
+        env:
+          CGO_ENABLE: 1
         run: |
           mkdir -p dist
           ext=""
           if [ "${{ matrix.goos }}" = "windows" ]; then ext=".exe"; fi
           output_name=schema-${{ matrix.goos }}-${{ matrix.goarch }}$ext
-          CGO_ENABLED=1 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
           echo "BINARY=dist/$output_name" >> $GITHUB_ENV
       - name: Create GitHub Release & Upload Binaries
         uses: softprops/action-gh-release@v2
