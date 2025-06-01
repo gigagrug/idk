@@ -5,13 +5,14 @@ on:
     inputs:
       version:
         type: string
-        description: "Version (0.1.0)"
+        description: "Version (e.g. 0.1.0)"
         required: true
 
 jobs:
   build:
     name: ${{ matrix.goos }}-${{ matrix.goarch }}
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         goos: [linux]
@@ -31,18 +32,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential
 
-      - name: Build
+      - name: Install GoReleaser
         run: |
-          mkdir -p dist
-          GOOS=linux GOARCH=amd64 CGO_ENABLED=1 CC=gcc go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/schema .
-          echo "BINARY=dist/schema" >> $GITHUB_ENV
+          curl -sSL https://github.com/goreleaser/goreleaser/releases/download/v1.22.0/goreleaser_1.22.0_Linux_x86_64.tar.gz | tar -xzv
+          sudo mv goreleaser /usr/local/bin/goreleaser
 
-      - name: Create GitHub Release & Upload Binary
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ inputs.version }}
-          name: ${{ inputs.version }}
-          body: ${{ inputs.version }}
-          files: ${{ env.BINARY }}
+      - name: Build and Release with GoReleaser
+        run: |
+          VERSION=${{ inputs.version }} goreleaser release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ inputs.version }}
