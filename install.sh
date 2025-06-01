@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -euo pipefail
+set -e
 
 REPO="gigagrug/idk"
 VERSION="${1:-latest}"
