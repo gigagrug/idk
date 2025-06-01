@@ -23,23 +23,11 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.24.3"
-      - name: Install Dependencies
-        run: sudo apt-get upgrade && sudo apt-get install -y build-essential mingw-w64 libc6-dev gcc gcc-multilib
       - name: Set CC for Cross-Compilation
         run: |
-          if [ "${{ matrix.goos }}" == "linux" ]; then
-            export CC=gcc
-          elif [ "${{ matrix.goos }}" == "windows" ]; then
-            export CC=x86_64-w64-mingw32-gcc
-          fi
-          echo "CC set to: $CC"
           mkdir -p dist
-          ext=""
-          if [ "${{ matrix.goos }}" == "windows" ]; then
-            ext=".exe"
-          fi
-          output_name=schema-${{ matrix.goos }}-${{ matrix.goarch }}$ext
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} CGO_ENABLED=1 CC=$CC go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
+          output_name=schema-${{ matrix.goos }}-${{ matrix.goarch }}
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=1 CC=gcc go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
           echo "BINARY=dist/$output_name" >> $GITHUB_ENV
       - name: Create GitHub Release & Upload Binary
         uses: softprops/action-gh-release@v2
