@@ -4,13 +4,10 @@ build:
     - linux
   goarch:
     - amd64
-  cgo: true
   env:
     - CGO_ENABLED=1
   flags:
     - -v
-  ldflags:
-    - -X main.version={{.Env.VERSION}}
 
 release:
   github:
