@@ -28,7 +28,6 @@ jobs:
       - name: Build schema binary
         run: |
           mkdir -p dist
-          go mod tidy
           ext=""
           if [ "${{ matrix.goos }}" == "windows" ]; then ext=".exe"; fi
           output_name=schema-${{ matrix.goos }}-${{ matrix.goarch }}$ext
