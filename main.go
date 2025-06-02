@@ -13,7 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 var version = "dev"
@@ -360,7 +360,7 @@ func connectToDBFromSchema(schemaFilePath string) (*sql.DB, string, error) {
 	var conn *sql.DB
 
 	if dbType == "sqlite" {
-		conn, err = sql.Open("sqlite3", dbURL)
+		conn, err = sql.Open("sqlite", dbURL)
 	} else if dbType == "postgres" {
 		conn, err = sql.Open("pgx", dbURL)
 	} else if dbType == "mysql" || dbType == "mariadb" {
