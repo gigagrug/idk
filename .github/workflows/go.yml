@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [windows]
-        goarch: [amd64]
+        goos: [windows, linux, darwin]
+        goarch: [amd64, arm64]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,22 +25,13 @@ jobs:
         with:
           go-version: "stable"
 
-      - name: Install dependencies
-        run: sudo apt-get install -y mingw-w64
-
       - name: Build schema binary
         run: |
-          if [ "${{ matrix.goos }}" == "linux" ]; then
-            export CC=gcc
-          elif [ "${{ matrix.goos }}" == "windows" ]; then
-            export CC=x86_64-w64-mingw32-gcc
-          fi
-          echo "CC set to: $CC"
           mkdir -p dist
           ext=""
           if [ "${{ matrix.goos }}" == "windows" ]; then ext=".exe"; fi
           output_name=schema-${{ matrix.goos }}-${{ matrix.goarch }}$ext
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} CGO_ENABLED=1 CC=$CC go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
           echo "BINARY=dist/$output_name" >> $GITHUB_ENV
 
       - name: Create GitHub Release & Upload Binaries
