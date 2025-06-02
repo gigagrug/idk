@@ -50,15 +50,12 @@ jobs:
         with:
           path: dist
 
-      - name: Display downloaded files (optional)
-        run: ls -R dist
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.version }}
           name: ${{ inputs.version }}
-          body: Release ${{ inputs.version }}
+          body: ${{ inputs.version }}
           files: dist/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
