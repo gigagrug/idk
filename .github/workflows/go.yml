@@ -21,7 +21,7 @@ jobs:
         run: |
           docker build -t schema-builder -f Dockerfile .
           docker create --name extract schema-builder
-          docker cp extract:/usr/local/bin/schema-windows-amd64 ./dist/
+          docker cp extract:/usr/local/bin/schema-windows-amd64.exe ./dist/
           docker cp extract:/usr/local/bin/schema-linux-amd64 ./dist/
           docker rm extract
 
