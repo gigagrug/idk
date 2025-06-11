@@ -9,31 +9,40 @@ on:
         required: true
 
 jobs:
-  linux-build:
-    name: Build Linux Binary (Docker)
+  build:
+    name: ${{ matrix.goos }}-${{ matrix.goarch }}
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        goos: [windows, linux, darwin]
+        goarch: [amd64, arm64]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build using Docker
-        run: |
-          docker build -t schema-builder -f Dockerfile .
-          docker create --name extract schema-builder
-          docker cp extract:/usr/local/bin/schema-windows-amd64.exe ./dist/
-          docker cp extract:/usr/local/bin/schema-linux-amd64 ./dist/
-          docker rm extract
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
 
-      - name: Upload Linux binary
+      - name: Build binary
+        run: |
+          mkdir -p dist
+          ext=""
+          if [ "${{ matrix.goos }}" == "windows" ]; then ext=".exe"; fi
+          output_name=schema-${{ matrix.goos }}-${{ matrix.goarch }}$ext
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} CGO_ENABLED=0 go build -ldflags "-X main.version=${{ inputs.version }}" -o dist/$output_name .
+        shell: bash
+
+      - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
-          name: schema
+          name: schema-${{ matrix.goos }}-${{ matrix.goarch }}
           path: dist/*
 
   release:
     name: Create GitHub Release
-    needs: linux-build
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts

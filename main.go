@@ -16,7 +16,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 var version = "dev"
@@ -466,7 +466,7 @@ func Conn2DB(schemaFilePath string) (*sql.DB, string, error) {
 	var driverName string
 	switch dbType {
 	case "sqlite":
-		driverName = "sqlite3"
+		driverName = "sqlite"
 	case "postgres":
 		driverName = "pgx"
 	case "mysql", "mariadb":
